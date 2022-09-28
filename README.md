@@ -16,10 +16,13 @@ Some examples of `File System Access API`:
 
 ## Useful links
 
-- Based on new [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API)
+- [Demo](https://danielzotti.github.io/file-explorer-web)
+
+- Docs for [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API)
+
+- Docs for [URL.createObjectUrl](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
 
 - More info and examples on [web.dev](https://web.dev/file-system-access/)
 
 - An HTML5 text editor [project](https://github.com/GoogleChromeLabs/text-editor/) by Google
 
-- [URL.createObjectUrl](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
