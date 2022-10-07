@@ -10,9 +10,9 @@ Some examples of `File System Access API`:
 
 ## TODO:
 
-- delete file
 - copy file
 - move (cut & paste) file
+- manage files in directory
 
 ## Useful links
 
