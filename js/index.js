@@ -33,85 +33,37 @@ selectFileButton.addEventListener('click', showFileInfo);
 
 //region READ DIRECTORY RECURSIVELY
 const selectFolderButton = document.querySelector('#btn-select-folder');
+const selectFolderStopButton = document.querySelector('#btn-select-folder-stop');
 const directoryInfoSection = document.querySelector('#directory-info');
+let directoryController = new AbortController();
 
 async function showDirectory() {
+
+  directoryController = new AbortController();
+  const signal = directoryController.signal;
+
   directoryInfoSection.innerHTML = '';
-  for await (const entry of await getDirectoryTree()) {
+
+  signal.addEventListener('abort', () => {
+    selectFolderStopButton.style.display = 'none';
+  });
+
+  for await (const entry of await getDirectoryTree(signal)) {
+    selectFolderStopButton.style.display = 'inline-block';
     const { name, size, isFolder, level, path } = entry;
     directoryInfoSection.innerHTML += printItem(name, size, isFolder, level, path);
   }
 }
 
+function stopShowDirectory() {
+  directoryController.abort();
+}
+
 selectFolderButton.addEventListener('click', showDirectory);
+selectFolderStopButton.addEventListener('click', stopShowDirectory);
+selectFolderStopButton.style.display = 'none';
 
-// endregion
 
-//region READ & WRITE TEXT FILE
-let textFileHandle;
-const fileWriteSection = document.querySelector('#file-content');
-const selectFileWriteButton = document.querySelector('#btn-select-file-write');
-const saveFileButton = document.querySelector('#btn-save-file');
-const saveAsFileButton = document.querySelector('#btn-save-as-file');
-
-async function showTextFileContent() {
-  const filePickerOptions = {
-    types: [
-      {
-        description: 'Text',
-        accept: {
-          'text/*': ['.html', '.js', '.ts', '.css', '.txt', '.md'],
-          'application/json': ['.json']
-        }
-      },
-    ],
-    excludeAcceptAllOption: true,
-    multiple: false
-  };
-
-  try {
-    [textFileHandle] = await window.showOpenFilePicker(filePickerOptions);
-
-    if(!textFileHandle) {
-      console.log('User cancelled or failed to open file');
-      return;
-    }
-
-    const fileData = await textFileHandle.getFile();
-    console.log({ fileData });
-
-    const fileContent = await fileData.text();
-    fileWriteSection.value = fileContent;
-  } catch(ex) {
-    console.log('User cancelled or failed to open file');
-  }
-
-}
-
-async function saveTextFileContent() {
-  if(!textFileHandle) {
-    console.log('No file handle');
-    return;
-  }
-  let stream = await textFileHandle.createWritable();
-  await stream.write(fileWriteSection.value);
-  await stream.close();
-}
-
-async function saveAsTextFileContent() {
-  textFileHandle = await window.showSaveFilePicker();
-  if(!textFileHandle) {
-    console.log('No file handle');
-    return;
-  }
-  let stream = await textFileHandle.createWritable();
-  await stream.write(fileWriteSection.value);
-  await stream.close();
-}
-
-selectFileWriteButton.addEventListener('click', showTextFileContent);
-saveFileButton.addEventListener('click', saveTextFileContent);
-saveAsFileButton.addEventListener('click', saveAsTextFileContent);
 // endregion
 
 //region PREVIEW IMAGE FILE
@@ -181,4 +133,103 @@ async function showFileVideo() {
 }
 
 selectVideoButton.addEventListener('click', showFileVideo);
+// endregion
+
+//region READ & WRITE TEXT FILE
+let textFileHandle;
+const fileWriteSection = document.querySelector('#file-content');
+const fileNameSection = document.querySelector('#file-content-name');
+const selectFileWriteButton = document.querySelector('#btn-select-file-write');
+const saveFileButton = document.querySelector('#btn-save-file');
+const saveAsFileButton = document.querySelector('#btn-save-as-file');
+const clearFileButton = document.querySelector('#btn-clear-file');
+const deleteFileButton = document.querySelector('#btn-delete-file');
+
+function clearFileContent() {
+  fileWriteSection.value = '';
+  fileNameSection.innerHTML = '';
+}
+
+async function setFileName(fileHandle) {
+  const fileData = await fileHandle.getFile();
+  const { name, size } = fileData;
+  fileNameSection.innerHTML = printItem(name, size);
+}
+
+async function showTextFileContent() {
+  const filePickerOptions = {
+    types: [
+      {
+        description: 'Text',
+        accept: {
+          'text/*': ['.html', '.js', '.ts', '.css', '.txt', '.md'],
+          'application/json': ['.json']
+        }
+      },
+    ],
+    excludeAcceptAllOption: true,
+    multiple: false
+  };
+
+  try {
+    [textFileHandle] = await window.showOpenFilePicker(filePickerOptions);
+
+    if(!textFileHandle) {
+      console.log('User cancelled or failed to open file');
+      return;
+    }
+    const fileData = await textFileHandle.getFile();
+
+    const fileContent = await fileData.text();
+    fileWriteSection.value = fileContent;
+
+    await setFileName(textFileHandle);
+
+  } catch(ex) {
+    console.log('[Catch] User cancelled or failed to open file');
+  }
+
+}
+
+async function saveTextFileContent() {
+  if(!textFileHandle) {
+    console.log('No file handle');
+    return;
+  }
+  let stream = await textFileHandle.createWritable();
+  await stream.write(fileWriteSection.value);
+  await stream.close();
+}
+
+async function saveAsTextFileContent() {
+  textFileHandle = await window.showSaveFilePicker();
+  if(!textFileHandle) {
+    console.log('No file handle');
+    return;
+  }
+  let stream = await textFileHandle.createWritable();
+  await stream.write(fileWriteSection.value);
+  await stream.close();
+  await setFileName(textFileHandle);
+}
+
+async function deleteFile() {
+
+  if(!textFileHandle) {
+    console.log('No file handle');
+    return;
+  }
+  try {
+    await textFileHandle.remove();
+    clearFileContent();
+  } catch(ex) {
+    console.log('Problem deleting file');
+  }
+}
+
+selectFileWriteButton.addEventListener('click', showTextFileContent);
+saveFileButton.addEventListener('click', saveTextFileContent);
+saveAsFileButton.addEventListener('click', saveAsTextFileContent);
+clearFileButton.addEventListener('click', clearFileContent);
+deleteFileButton.addEventListener('click', deleteFile);
 // endregion

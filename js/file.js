@@ -26,7 +26,7 @@ export async function getFiles(filePickerOptions) {
   }
 }
 
-export async function getDirectoryTree() {
+export async function getDirectoryTree(signal) {
   const directoryPickerOptions = {
     mode: 'read', // default
     // mode: 'readwrite',
@@ -41,6 +41,10 @@ export async function getDirectoryTree() {
     }
 
     async function* getFilesRecursively(entry, level = 0, path = '') {
+
+      if(signal.aborted) {
+        throw new Error('aborted');
+      }
 
       if(entry.kind === 'file') {
 
@@ -64,6 +68,10 @@ export async function getDirectoryTree() {
     return getFilesRecursively(directoryHandle);
 
   } catch(ex) {
+    if(ex.message === 'aborted') {
+      console.log('Task aborted');
+      return [];
+    }
     console.log('[Catch] User cancelled or failed to open file');
     return [];
   }

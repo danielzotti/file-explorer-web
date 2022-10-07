@@ -3,36 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>File Explorer Web</title>
+  <link rel="stylesheet" href="styles.css">
   <script type="module" src="js/ui.js" defer></script>
   <script type="module" src="js/file.js" defer></script>
   <script type="module" src="js/index.js" defer></script>
-  <style>
-    details {
-      margin-bottom: 20px;
-    }
-
-    summary {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    #file-image img {
-      display: block;
-      max-width: 500px;
-      width: 100%;
-    }
-
-    #file-video video {
-      display: block;
-      max-width: 500px;
-      width: 100%;
-    }
-
-    #file-video, #file-image {
-      display: none;
-    }
-  </style>
 </head>
 <body>
 <h1>File Explorer Web</h1>
@@ -47,7 +21,8 @@
 <details>
   <summary>Read directory recursively</summary>
   <button id="btn-select-folder">Select folder</button>
-  <div id="directory-info" style="max-height: 60vh;overflow: auto"></div>
+  <button id="btn-select-folder-stop">Stop</button>
+  <div id="directory-info"></div>
 </details>
 
 <hr/>
@@ -55,7 +30,7 @@
 <details>
   <summary>Preview an image</summary>
   <button id="btn-select-image">Select image</button>
-  <div id="file-image" >
+  <div id="file-image">
     <img alt="An image from your disk" src=""/>
   </div>
 </details>
@@ -66,7 +41,7 @@
   <summary>Preview a video</summary>
   <button id="btn-select-video">Select video</button>
   <div id="file-video">
-    <video  alt="A video from your disk" src="" controls autoplay></video>
+    <video alt="A video from your disk" src="" controls autoplay></video>
   </div>
 </details>
 
@@ -77,8 +52,11 @@
   <button id="btn-select-file-write">Select file</button>
   <button id="btn-save-file">Save</button>
   <button id="btn-save-as-file">Save As</button>
+  <button id="btn-delete-file">Delete</button>
+  <button id="btn-clear-file">Clear</button>
   <div>
-    <textarea id="file-content" style="width:100%;min-height: 60vh;overflow: auto"></textarea>
+    <div id="file-content-name"></div>
+    <textarea id="file-content"></textarea>
   </div>
 </details>
 

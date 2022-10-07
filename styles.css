@@ -1,0 +1,47 @@
+* {
+  box-sizing: border-box;
+}
+
+details {
+  margin-bottom: 20px;
+}
+
+textarea {
+  padding: 10px;
+  background-color: #111;
+  color: #EFEFEF;
+  width: 100%;
+  min-height: 60vh;
+  overflow: auto
+}
+
+summary {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#file-image img {
+  display: block;
+  max-width: 500px;
+  width: 100%;
+}
+
+#file-video video {
+  display: block;
+  max-width: 500px;
+  width: 100%;
+}
+
+#file-video, #file-image {
+  display: none;
+}
+
+#directory-info {
+  max-height: 60vh;
+  overflow: auto
+}
+
+#file-content-name {
+  margin-top: 10px;
+}
