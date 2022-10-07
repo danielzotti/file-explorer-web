@@ -167,7 +167,7 @@ async function showTextFileContent() {
         }
       },
     ],
-    excludeAcceptAllOption: true,
+    excludeAcceptAllOption: false,
     multiple: false
   };
 
